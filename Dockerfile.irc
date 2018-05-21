@@ -1,0 +1,15 @@
+FROM joshragem/base:20180512
+RUN apt-get update && apt-get install -y build-essential wget libssl-dev pkg-config libsqlite3-dev
+RUN wget -O- https://github.com/JoshRagem/ircd-hybrid/archive/master.tar.gz |\
+    tar -xz
+RUN ls /
+WORKDIR /ircd-hybrid-master
+RUN ./configure
+RUN make
+RUN make install
+COPY irc/ircd.conf /usr/local/etc/ircd.conf
+COPY irc/run.sh /bin/run.sh
+RUN chmod +x /bin/run.sh
+
+EXPOSE 6665-6669
+
