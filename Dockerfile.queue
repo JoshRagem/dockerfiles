@@ -1,0 +1,17 @@
+FROM joshragem/base:20180512
+RUN apt-get install -y gnupg2 apt-transport-https
+
+COPY keys/activemq.keys /activemq.keys
+RUN gpg --import /activemq.keys
+
+RUN mkdir -p /usr/share/man/man1/
+RUN apt-get install -y wget openjdk-8-jre-headless
+RUN wget -O - 'http://www.apache.org/dyn/closer.cgi?filename=/activemq/5.15.3/apache-activemq-5.15.3-bin.tar.gz&action=download' \
+    | tar -xz
+ENV PATH=/apache-activemq-5.15.3/bin:$PATH
+
+COPY queue/run.sh /bin/run.sh
+COPY queue/monitrc /etc/monit/monitrc
+RUN chmod 0700 /etc/monit/monitrc
+RUN chmod +x /bin/run.sh
+

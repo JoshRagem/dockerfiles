@@ -2,7 +2,7 @@ BUILD_TAG ?= 20180512
 
 .PHONE: clean push push_base push_proxy push_logger
 
-build: base_$(BUILD_TAG).tar proxy_$(BUILD_TAG).tar logger_$(BUILD_TAG).tar
+build: base_$(BUILD_TAG).tar proxy_$(BUILD_TAG).tar logger_$(BUILD_TAG).tar queue_$(BUILD_TAG).tar
 
 clean:
 	rm *.tar; rm keys/*
@@ -19,10 +19,17 @@ logger_$(BUILD_TAG).tar: Dockerfile.logger base_$(BUILD_TAG).tar logger/ keys/fl
 	docker build -t joshragem/logger:$(BUILD_TAG) -f Dockerfile.logger . && \
         docker image save joshragem/logger:$(BUILD_TAG) > logger_$(BUILD_TAG).tar
 
+queue_$(BUILD_TAG).tar: Dockerfile.queue base_$(BUILD_TAG).tar queue/ keys/activemq.keys
+	docker build -t joshragem/queue:$(BUILD_TAG) -f Dockerfile.queue . && \
+	docker image save joshragem/queue:$(BUILD_TAG) > queue_$(BUILD_TAG).tar
+
 keys/fluentbit.pub:
 	wget -qO - http://packages.fluentbit.io/fluentbit.key > keys/fluentbit.pub
 
-push: push_base push_proxy push_logger
+keys/activemq.keys:
+	wget -qO - http://www.apache.org/dist/activemq/KEYS > keys/activemq.keys
+
+push: push_base push_proxy push_logger push_queue
 
 push_base: base_$(BUILD_TAG).tar
 	docker push joshragem/base:$(BUILD_TAG)
@@ -32,4 +39,7 @@ push_proxy: proxy_$(BUILD_TAG).tar
 
 push_logger: logger_$(BUILD_TAG).tar
 	docker push joshragem/logger:$(BUILD_TAG)
+
+push_queue: queue_$(BUILD_TAG).tar
+	docker push joshragem/queue:$(BUILD_TAG)
 
