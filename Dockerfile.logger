@@ -1,14 +1,6 @@
-FROM joshragem/base:20180512
+FROM joshragem/base:20180915
 RUN apt-get install -y gnupg2 apt-transport-https
 
-COPY keys/fluentbit.pub /
-
-RUN apt-key add /fluentbit.pub
-RUN echo 'deb http://packages.fluentbit.io/debian jessie main' >> /etc/apt/sources.list
-RUN apt-get update && apt-get install -y td-agent-bit
-ENV PATH="/opt/td-agent-bit/bin:$PATH"
-
-COPY logger/* /etc/td-agent-bit/
 COPY logger/run.sh /bin/run.sh
 COPY logger/rotatelogs.sh /bin/rotatelogs.sh
 COPY logger/monitrc /etc/monit/monitrc

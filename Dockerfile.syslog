@@ -1,0 +1,9 @@
+FROM joshragem/base:20180512
+RUN apt-get update && apt-get install -y software-properties-common
+RUN apt-get install -y gnupg2
+RUN add-apt-repository -y ppa:adiscon/v8-stable
+RUN apt-get install -y rsyslog curl
+RUN curl -OL https://github.com/wangyu-/UDPspeeder/releases/download/20180522.0/speederv2_binaries.tar.gz
+RUN echo '8a6932913f235e3d214d39e436af0939  speederv2_binaries.tar.gz' | md5sum -c
+RUN tar -xf speederv2_binaries.tar.gz
+RUN mv speederv2_x86 /usr/local/bin

@@ -1,5 +1,5 @@
-FROM debian:9.4-slim
-ENV DOCKER_IMG_BUILD_DATE=20180512
+FROM debian:9.5-slim
+ENV DOCKER_IMG_BUILD_DATE=20180915
 RUN apt update && apt upgrade -y && apt install -y monit
 EXPOSE 2812/tcp
 COPY prestart.sh /bin/prestart.sh

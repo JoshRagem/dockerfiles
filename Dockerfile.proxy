@@ -1,4 +1,4 @@
-FROM joshragem/base:20180512
+FROM joshragem/base:20180915
 RUN apt-get install -y tinyproxy dnsmasq
 COPY proxy/dnsmasq.conf /etc/dnsmasq.conf
 COPY proxy/localdns.sh /bin/proxydns.sh
