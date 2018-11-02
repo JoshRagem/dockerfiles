@@ -1,8 +1,8 @@
 BUILD_TAG ?= 20180512
 
-.PHONE: clean push push_base push_proxy push_logger push_irc
+.PHONE: clean push push_base push_proxy push_logger push_irc push_example
 
-build: base_$(BUILD_TAG).tar proxy_$(BUILD_TAG).tar logger_$(BUILD_TAG).tar irc_$(BUILD_TAG).tar
+build: base_$(BUILD_TAG).tar proxy_$(BUILD_TAG).tar logger_$(BUILD_TAG).tar irc_$(BUILD_TAG).tar example_${BUILD_TAG}.tar
 
 clean:
 	rm *.tar; rm keys/*
@@ -23,10 +23,14 @@ irc_$(BUILD_TAG).tar: Dockerfile.irc base_$(BUILD_TAG).tar irc/
 	docker build -t joshragem/irc:$(BUILD_TAG) -f Dockerfile.irc . && \
         docker image save joshragem/irc:$(BUILD_TAG) > irc_$(BUILD_TAG).tar
 
+example_$(BUILD_TAG).tar: Dockerfile.example base_$(BUILD_TAG).tar
+	docker build -t joshragem/example:$(BUILD_TAG) -f Dockerfile.example . && \
+        docker image save joshragem/example:$(BUILD_TAG) > example_$(BUILD_TAG).tar
+
 keys/fluentbit.pub:
 	wget -qO - http://packages.fluentbit.io/fluentbit.key > keys/fluentbit.pub
 
-push: push_base push_proxy push_logger
+push: push_base push_proxy push_logger push_example
 
 push_base: base_$(BUILD_TAG).tar
 	docker push joshragem/base:$(BUILD_TAG)
@@ -39,4 +43,7 @@ push_logger: logger_$(BUILD_TAG).tar
 
 push_irc: irc_$(BUILD_TAG).tar
 	docker push joshragem/irc:$(BUILD_TAG)
+
+push_example: example_$(BUILD_TAG).tar
+	docker push joshragem/example:$(BUILD_TAG)
 
